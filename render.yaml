@@ -8,6 +8,5 @@ services:
         value: "true"
       - key: N8N_PORT
         value: "5678"
-    plan: free
-    region: frankfurt # Choisissez votre région
-    
+    volumes:
+      - ~/.n8n:/home/node/.n8n
