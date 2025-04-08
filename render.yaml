@@ -2,7 +2,6 @@ services:
   - type: web
     plan: free
     env: docker
-    dockerfilePath: Dockerfile
     envVars:
       - key: N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE
         value: "true"
