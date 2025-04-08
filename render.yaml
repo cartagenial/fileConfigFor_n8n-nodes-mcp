@@ -1,11 +1,13 @@
-version: '3'
 services:
-  n8n:
-    image: n8nio/n8n
-    environment:
-      - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true
-      - MCP_OPENAI_API_KEY=your-openai-key
-    ports:
-      - "5678:5678"
-    volumes:
-      - ~/.n8n:/home/node/.n8n
+  - type: web
+    name: n8n-mcp
+    env: docker
+    dockerfilePath: Dockerfile
+    envVars:
+      - key: N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE
+        value: "true"
+      - key: N8N_PORT
+        value: "5678"
+    plan: free
+    region: frankfurt # Choisissez votre région
+    
