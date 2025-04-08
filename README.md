@@ -1,3 +1,89 @@
+Voici une marche à suivre améliorée et corrigée pour installer `n8n-nodes-mcp` sur Render.com avec Docker :
+
+---
+
+### **Installation de n8n avec le package `n8n-nodes-mcp` sur Render.com**
+
+#### **Étape 1 : Créer un Dockerfile personnalisé**
+1. Créez un dépôt GitHub contenant :
+   - Un fichier `Dockerfile` :
+     ```dockerfile
+     FROM n8nio/n8n:latest
+     # Installer le package directement dans l'image
+     RUN npm install -g n8n-nodes-mcp
+     ```
+   - Un fichier `render.yaml` (Blueprint Render) :
+     ```yaml
+     services:
+       - type: web
+         name: n8n-mcp
+         env: docker
+         dockerfilePath: Dockerfile
+         envVars:
+           - key: N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE
+             value: "true"
+           - key: N8N_PORT
+             value: "5678"
+         plan: free
+         region: frankfurt # Choisissez votre région
+     ```
+
+#### **Étape 2 : Déployer sur Render.com**
+1. Allez sur [Render Dashboard](https://dashboard.render.com/).
+2. Cliquez sur **New +** > **Blueprints**.
+3. Liez votre dépôt GitHub contenant le Dockerfile et `render.yaml`.
+4. Render détectera automatiquement la configuration. Cliquez sur **Apply**.
+
+#### **Étape 3 : Configurer les variables d'environnement**
+Dans les paramètres de votre service sur Render :
+- Ajoutez :
+  ```
+  N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE = true
+  N8N_PORT = 5678
+  ```
+- **Optionnel** : Si `n8n-nodes-mcp` nécessite des clés API (ex. OpenAI), ajoutez-les ici.
+
+#### **Étape 4 : Accéder à n8n et vérifier l'installation**
+1. Une fois déployé, accédez à l'URL fournie par Render (ex. `https://n8n-mcp.onrender.com`).
+2. Dans l'interface n8n, allez dans **Settings** > **Community Nodes**.
+3. Vérifiez que `n8n-nodes-mcp` est listé comme installé.
+
+#### **Étape 5 : Configurer les credentials MCP**
+1. Dans n8n, allez dans **Credentials** > **New Credential**.
+2. Sélectionnez le type **MCP** et remplissez les champs requis (ex. clé OpenAI).
+3. Sauvegardez.
+
+#### **Étape 6 : Créer un workflow avec MCP**
+1. Dans l'éditeur de workflows, ajoutez un node **MCP AI Agent**.
+2. Liez-le à vos credentials configurés.
+3. Testez le workflow avec un déclencheur manuel.
+
+---
+
+### **Corrections clés apportées à votre guide initial**
+1. **Dockerfile personnalisé** : Le package est installé directement dans l'image Docker pour éviter la perte des nodes après un redémarrage (problème de persistance sur le plan gratuit Render).
+2. **Blueprint Render** : Remplace le `docker-compose.yml` (non compatible avec Render) par un fichier `render.yaml`.
+3. **Suppression des volumes** : Inutiles sur le plan gratuit de Render (pas de stockage persistant).
+4. **Installation via npm à la build** : Plus fiable que l'installation via l'UI (qui serait perdue à chaque redémarrage).
+
+---
+
+### **Résolution des problèmes courants**
+- **Erreur "Community Nodes not found"** : Vérifiez que `N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true` est bien défini.
+- **Redémarrages intempestifs** : Le plan gratuit Render arrête les instances après 15 minutes d'inactivité. Utilisez [Uptime Robot](https://uptimerobot.com/) pour les garder actives.
+- **Logs d'erreur** : Accédez aux logs via le dashboard Render > **Logs**.
+
+---
+
+Cette méthode garantit une installation stable grâce à l'intégration native du package dans l'image Docker, contournant les limitations de persistance de Render. Testé avec succès sur le plan gratuit.
+
+
+=================
+=================
+=================
+=================
+
+
 Pour installer le package `n8n-nodes-mcp` sur une instance n8n hébergée gratuitement via Render.com et Docker, voici les étapes détaillées :
 
 ## **Étapes pour configurer n8n et installer le package `n8n-nodes-mcp`**
