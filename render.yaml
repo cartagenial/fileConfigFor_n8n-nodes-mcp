@@ -8,5 +8,4 @@ services:
         value: "true"
       - key: N8N_PORT
         value: "5678"
-    volumes:
-      - ~/.n8n:/home/node/.n8n
+        
